@@ -19,7 +19,8 @@ open class FormatBar: UIView {
 
     /// Called whenever the trailing item (if present) is tapped
     ///
-    open var trailingItemHandler: ((UIButton) -> Void)? = nil
+//    open var trailingItemHandler: ((UIButton) -> Void)? = nil
+    open var trailingItemHandlers: [UIButton : (() -> Void)?]? = nil
 
     /// Container ScrollView
     ///
@@ -67,21 +68,25 @@ open class FormatBar: UIView {
     /// If set to a FormatBarItem, the appearance will match the default items in the bar.
     /// If a custom trailing item is set, no overflow toggle will be shown.
     ///
-    public var trailingItem: UIButton? = nil {
+    public var trailingItems: [UIButton]? = nil {
         didSet {
             updateScrollViewInsets()
 
             trailingItemContainer.arrangedSubviews.forEach({ $0.removeFromSuperview() })
 
-            if let item = trailingItem {
-                if let formatBarItem = item as? FormatBarItem {
-                    configureStylesFor(formatBarItem)
+            if let items = trailingItems {
+                
+                for item in items {
+                    if let formatBarItem = item as? FormatBarItem {
+                        configureStylesFor(formatBarItem)
+                    }
+
+                    item.addTarget(self, action: #selector(handleTrailingButtonAction), for: .touchUpInside)
+                    item.addTarget(self, action: #selector(handleButtonTouch), for: .touchDown)
+
+                    trailingItemContainer.addArrangedSubview(item)
                 }
-
-                item.addTarget(self, action: #selector(handleTrailingButtonAction), for: .touchUpInside)
-                item.addTarget(self, action: #selector(handleButtonTouch), for: .touchDown)
-
-                trailingItemContainer.addArrangedSubview(item)
+                
 
                 setOverflowItemsVisible(false)
             }
@@ -174,9 +179,14 @@ open class FormatBar: UIView {
     }
 
     fileprivate var trailingInset: CGFloat {
-        if let trailingItem = trailingItem {
-            trailingItem.sizeToFit()
-            return trailingItem.bounds.size.width + Constants.trailingButtonMargin
+        if let trailingItems = trailingItems {
+            var width = Constants.trailingButtonMargin
+            for trailingItem in trailingItems {
+                trailingItem.sizeToFit()
+                width += 10
+                width += trailingItem.bounds.size.width + Constants.trailingButtonMargin
+            }
+            return width
         } else {
             return Constants.defaultButtonWidth
         }
@@ -435,7 +445,7 @@ open class FormatBar: UIView {
         updateVisibleItemsForCurrentBounds()
 
         let overflowVisible = UserDefaults.standard.bool(forKey: Constants.overflowExpandedUserDefaultsKey)
-        setOverflowItemsVisible(overflowVisible && trailingItem == nil, animated: false)
+        setOverflowItemsVisible(overflowVisible && trailingItems == nil, animated: false)
 
         if overflowVisible {
             rotateOverflowToggleItem(.vertical, animated: false)
@@ -447,7 +457,7 @@ open class FormatBar: UIView {
 
     fileprivate func updateOverflowToggleItemVisibility() {
         let hasOverflowItems = !overflowItems.isEmpty
-        overflowToggleItem.isHidden = !hasOverflowItems || trailingItem != nil
+        overflowToggleItem.isHidden = !hasOverflowItems || trailingItems != nil
     }
 
     /// Updates the overflowToggleItemRTLLeadingConstraint with the correct value. On LTR layout this function does nothing.
@@ -507,7 +517,10 @@ open class FormatBar: UIView {
     }
 
     @IBAction func handleTrailingButtonAction(_ sender: FormatBarItem) {
-        trailingItemHandler?(sender)
+        if let action = trailingItemHandlers?[sender] {
+            action?()
+        }
+//        trailingItemHandler?(sender)
     }
 
     @IBAction func handleToggleButtonAction(_ sender: FormatBarItem) {

@@ -140,7 +140,7 @@ open class ParagraphStyle: NSMutableParagraphStyle, CustomReflectable {
 
     open override var headIndent: CGFloat {
         get {
-            let extra: CGFloat = (CGFloat(blockquotes.count) * Metrics.listTextIndentation) + listIndent
+            let extra: CGFloat = (CGFloat(blockquotes.count) * Metrics.listTextIndentation) + listIndent + 20
 
             return baseHeadIndent + extra
         }
@@ -153,7 +153,7 @@ open class ParagraphStyle: NSMutableParagraphStyle, CustomReflectable {
     open override var firstLineHeadIndent: CGFloat {
         get {
 
-            let extra: CGFloat = (CGFloat(blockquotes.count) * Metrics.listTextIndentation) + listIndent
+            let extra: CGFloat = (CGFloat(blockquotes.count) * Metrics.listTextIndentation) + listIndent + 20
 
             return baseFirstLineHeadIndent + extra
         }
@@ -166,7 +166,7 @@ open class ParagraphStyle: NSMutableParagraphStyle, CustomReflectable {
 
     open override var tailIndent: CGFloat {
         get {
-            let extra: CGFloat = CGFloat(self.blockquotes.count) * Metrics.defaultIndentation
+            let extra: CGFloat = CGFloat(self.blockquotes.count) * Metrics.defaultIndentation + 10
 
             return baseTailIndent - extra
         }
