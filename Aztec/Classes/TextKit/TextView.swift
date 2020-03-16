@@ -1504,6 +1504,16 @@ open class TextView: UITextView {
         replace(at: range, with: attachment)
         return attachment
     }
+    
+    
+    @discardableResult
+    open func replaceWithAudio(at range: NSRange, sourceURL: URL, placeHolderImage: UIImage?, identifier: String = UUID().uuidString) -> AudioAttachment {
+        let attachment = AudioAttachment(identifier: identifier, url: sourceURL)
+        attachment.delegate = storage
+        attachment.image = placeHolderImage
+        replace(at: range, with: attachment)
+        return attachment
+    }
 
     /// Returns the associated NSTextAttachment, at a given point, if any.
     ///
