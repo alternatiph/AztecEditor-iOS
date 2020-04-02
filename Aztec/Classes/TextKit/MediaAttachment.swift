@@ -534,10 +534,13 @@ private extension MediaAttachment {
         guard let url = mediaURL else {
             return
         }
-
-        image = delegate!.mediaAttachmentPlaceholder(for: self)
-        isFetchingImage = true
-        retryCount += 1
+        
+        if !(self is AudioAttachment) {
+            image = delegate!.mediaAttachmentPlaceholder(for: self)
+            isFetchingImage = true
+            retryCount += 1
+        }
+        
 
         delegate!.mediaAttachment(self, imageFor: url, onSuccess: { [weak self] newImage in
             guard let `self` = self else {
