@@ -37,6 +37,7 @@ class AttributedStringParser {
         ImageAttachmentToElementConverter(),
         LineAttachmentToElementConverter(),
         VideoAttachmentToElementConverter(),
+        AudioAttachmentToElementConverter(),
     ]
     
     // MARK: - Internal Data Structures
@@ -57,6 +58,8 @@ class AttributedStringParser {
     /// - Returns: the HTML tree.
     ///
     func parse(_ attrString: NSAttributedString) -> RootNode {
+        
+        // K1: HERE IT CONVERTS STRING TO NODE
         var nodes = [Node]()
         var previousParagraphConversions = [ParagraphPropertyConversion]()
         

@@ -119,7 +119,7 @@ extension Element {
     public static let video = Element("video")
     public static let wbr = Element("wbr")
     public static let body = Element("body")
-
+    public static let audio = Element("audio")
 }
 
 extension Element {
